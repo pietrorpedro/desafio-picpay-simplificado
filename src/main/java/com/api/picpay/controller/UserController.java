@@ -1,5 +1,6 @@
 package com.api.picpay.controller;
 
+import com.api.picpay.dto.TransferRequest;
 import com.api.picpay.dto.UserDTO;
 import com.api.picpay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,16 @@ public class UserController {
         try {
             service.deleteUser(id);
             return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/transfer")
+    public ResponseEntity<?> transferFunds(@RequestBody TransferRequest transferRequest) {
+        try {
+            service.transferFunds(transferRequest.getSenderId(), transferRequest.getRecipientId(), transferRequest.getValue());
+            return ResponseEntity.status(HttpStatus.OK).body("Transfer completed successfully");
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
