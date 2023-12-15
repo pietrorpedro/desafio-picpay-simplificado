@@ -7,7 +7,12 @@ import com.api.picpay.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 
 @Service
@@ -54,12 +59,28 @@ public class UserService {
 
         if (sender.getRole().name().equals("SHOPKEEPER")) {
             throw new Exception("Shopkeepers cannot transfer funds");
-        }else {
-            sender.setBalance(sender.getBalance() - value);
-            recipient.setBalance(recipient.getBalance() + value);
-
-            repository.save(sender);
-            repository.save(recipient);
         }
+        if (sender.getBalance() <= 0 || sender.getBalance() < value) {
+            throw new Exception("Insufficient fund");
+        }
+
+        String authorizationService = "https://run.mocky.io/v3/5794d450-d2e2-4412-8131-73d0293ac1cc";
+        ResponseEntity<Map> response = new RestTemplate().getForEntity(authorizationService, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            String message = (String) response.getBody().get("message");
+            if ("Autorizado".equalsIgnoreCase(message)) {
+                sender.setBalance(sender.getBalance() - value);
+                recipient.setBalance(recipient.getBalance() + value);
+
+                repository.save(sender);
+                repository.save(recipient);
+            }else {
+                throw new Exception("Transfer authorization failed");
+            }
+        }else {
+            throw new Exception("Transfer authorization contact failed");
+        }
+
     }
 }
