@@ -1,7 +1,7 @@
 package com.api.picpay.controller;
 
-import com.api.picpay.dto.CommonUserDTO;
-import com.api.picpay.service.CommonUserService;
+import com.api.picpay.dto.UserDTO;
+import com.api.picpay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/common")
-public class CommonUserController {
+@RequestMapping("/user")
+public class UserController {
 
     @Autowired
-    private CommonUserService service;
+    private UserService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findCommonUserById(@PathVariable Long id) {
+    public ResponseEntity<?> findUserById(@PathVariable Long id) {
         try {
-            CommonUserDTO user = service.findCommomUserById(id);
+            UserDTO user = service.findUserById(id);
             return ResponseEntity.status(HttpStatus.OK).body(user);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -26,9 +26,9 @@ public class CommonUserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> saveCommonUser(@RequestBody CommonUserDTO data) {
+    public ResponseEntity<?> saveUser(@RequestBody UserDTO data) {
         try {
-            service.saveCommonUser(data);
+            service.saveUser(data);
             return ResponseEntity.status(HttpStatus.OK).body(data);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -36,9 +36,9 @@ public class CommonUserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCommonUser(@RequestBody CommonUserDTO data, @PathVariable Long id) {
+    public ResponseEntity<?> updateUser(@RequestBody UserDTO data, @PathVariable Long id) {
         try {
-            service.updateCommonUser(data, id);
+            service.updateUser(data, id);
             return ResponseEntity.status(HttpStatus.OK).body(data);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -46,9 +46,9 @@ public class CommonUserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCommonUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            service.deleteCommonUser(id);
+            service.deleteUser(id);
             return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

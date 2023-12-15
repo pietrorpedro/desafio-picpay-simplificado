@@ -1,5 +1,6 @@
 package com.api.picpay.model;
 
+import com.api.picpay.dto.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonUser {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +30,7 @@ public class CommonUser {
     private String password;
 
     private Double balance;
+
+    @Enumerated(EnumType.STRING)
+    private RoleEnum role;
 }
