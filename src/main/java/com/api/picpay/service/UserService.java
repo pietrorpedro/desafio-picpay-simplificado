@@ -53,14 +53,14 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public void transferFunds(Long senderId, Long recipientId, Double value) throws Exception {
-        User sender = repository.findById(senderId).orElseThrow(() -> new EntityNotFoundException("Sender not found"));
-        User recipient = repository.findById(recipientId).orElseThrow(() -> new EntityNotFoundException("Recipient not found"));
+    public void transferFunds(Long payerId, Long payeeId, Double value) throws Exception {
+        User payer = repository.findById(payerId).orElseThrow(() -> new EntityNotFoundException("Payer not found"));
+        User payee = repository.findById(payeeId).orElseThrow(() -> new EntityNotFoundException("Payee not found"));
 
-        if (sender.getRole().name().equals("SHOPKEEPER")) {
+        if (payer.getRole().name().equals("SHOPKEEPER")) {
             throw new Exception("Shopkeepers cannot transfer funds");
         }
-        if (sender.getBalance() <= 0 || sender.getBalance() < value) {
+        if (payer.getBalance() <= 0 || payer.getBalance() < value) {
             throw new Exception("Insufficient fund");
         }
 
@@ -70,11 +70,11 @@ public class UserService {
         if (response.getStatusCode() == HttpStatus.OK) {
             String message = (String) response.getBody().get("message");
             if ("Autorizado".equalsIgnoreCase(message)) {
-                sender.setBalance(sender.getBalance() - value);
-                recipient.setBalance(recipient.getBalance() + value);
+                payer.setBalance(payer.getBalance() - value);
+                payee.setBalance(payee.getBalance() + value);
 
-                repository.save(sender);
-                repository.save(recipient);
+                repository.save(payer);
+                repository.save(payee);
             }else {
                 throw new Exception("Transfer authorization failed");
             }
